@@ -152,3 +152,53 @@ Kích hoạt và chạy service:
 ```
 systemctl daemon-reload && systemctl enable --now vminsert
 ```
+
+Bước 3.3: Dựng các node vmselect (01, 02)
+
+Tạo thư mục cấu hình
+```
+mkdir -p /opt/victoriametrics-vmselect
+chown -R victoriametrics:victoriametrics /opt/victoriametrics-vmselect
+```
+
+File cấu hình môi trường ```/opt/victoriametrics-vmselect/vmselect.conf```
+
+```
+# VictoriaMetrics vmselect environment configuration
+httpListenAddr=:8481
+storageNode=dc-prod-devops-vmstorage01:8401,dc-prod-devops-vmstorage02:8401,dc-prod-devops-vmstorage03:8401
+dedup.minInterval=10s
+loggerFormat=json
+```
+
+(Bật -dedup.minInterval=10s để tự động loại bỏ trùng lặp dữ liệu do cơ chế nhân bản replication tạo ra khi trả kết quả về Grafana).
+
+File dịch vụ Systemd ```/etc/systemd/system/vmselect.service```
+
+```
+[Unit]
+Description=VictoriaMetrics vmselect service
+After=network.target
+
+[Service]
+Type=simple
+User=victoriametrics
+Group=victoriametrics
+Restart=always
+EnvironmentFile=/opt/victoriametrics-vmselect/vmselect.conf
+ExecStart=/usr/local/bin/vmselect-prod -envflag.enable
+
+# Security Hardening Isolation
+PrivateTmp=yes
+ProtectHome=yes
+NoNewPrivileges=yes
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target
+```
+Kích hoạt và chạy service:
+```
+systemctl daemon-reload && systemctl enable --now vmselect
+```
+
