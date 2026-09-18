@@ -32,6 +32,14 @@ wget https://repo.zabbix.com/zabbix/6.0/ubuntu/pool/main/z/zabbix-release/zabbix
 sudo dpkg -i zabbix-release_6.0-4+ubuntu22.04_all.deb
 sudo apt update
 ```
+
+Ubuntu 24.04 (Noble)
+```
+wget https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.0-2+ubuntu24.04_all.deb
+sudo dpkg -i zabbix-release_7.0-2+ubuntu24.04_all.deb
+```
+
+
 Bước 3: Cài đặt Zabbix Agent 2
 ```
 sudo apt install zabbix-agent2 zabbix-agent2-plugin-* -y
